@@ -1,0 +1,54 @@
+# Copyright 2015 Yuxuan Shui
+# Distributed under the terms of the GNU General Public License v2
+
+require freedesktop-desktop freedesktop-mime gtk-icon-cache
+
+export_exlib_phases src_install pkg_postinst pkg_setup
+
+myexparam rev
+myexparam base_url="http://vivaldi.com/download/"
+
+MY_PV="${PV}-$(exparam rev)"
+MY_PN=Vivaldi_TP
+MY_PNV="${MY_PN}_${MY_PV}"
+
+SUMMARY="A new browser for our friends"
+HOMEPAGE="http://vivaldi.com/"
+
+DOWNLOADS="$(exparam base_url)/${MY_PNV}_amd64.deb"
+
+LICENCES="vivaldi"
+SLOT="0"
+MYOPTIONS="
+platform:
+    amd64"
+
+DEPENDENCIES="
+    run:
+        media-libs/fontconfig
+        x11-libs/libXtst
+        x11-libs/gtk+:2
+        net-print/cups
+"
+
+WORK="${WORKBASE}"
+
+vivaldi_pkg_setup() {
+    exdirectory --allow /opt
+}
+
+vivaldi_src_install() {
+    edo mkdir raw
+    edo cd raw
+    edo tar --no-same-owner -xf ${WORKBASE}/data.tar.xz
+    edo rm -rf usr/share/doc
+    edo cp -rf * ${IMAGE}
+    dosym /usr/lib/libudev.so.1 opt/vivaldi/libudev.so.0
+    edo chmod 4755 ${IMAGE}/opt/vivaldi/vivaldi-sandbox
+}
+
+vivaldi_pkg_postinst() {
+    freedesktop-desktop_pkg_postinst
+    freedesktop-mime_pkg_postinst
+    gtk-icon-cache_pkg_postinst
+}

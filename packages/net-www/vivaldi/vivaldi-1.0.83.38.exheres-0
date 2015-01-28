@@ -1,0 +1,7 @@
+# Copyright 2015 Yuxuan Shui
+# Distributed under the terms of the GNU General Public License v2
+
+require vivaldi [ rev="1" ]
+
+PLATFORMS="~amd64"
+
